@@ -1,16 +1,18 @@
 # DSH 本地跨对话记忆插件
 
-**唯一当前版本：`2.1.1+dsh-local.5`。对应应用：DeepSeek Harness `0.2.0-rc.2`（Windows 桌面 / Web），宿主 Node.js 22+。**
+**唯一当前版本：`2.1.1+dsh-local.6`。对应应用：DeepSeek Harness `0.2.0-rc.2`（Windows 桌面 / Web），宿主 Node.js 22+。**
 
-DSH 与 Codex 分别维护版本。此版本是维护者指定的唯一最新 DSH 标准，不以 Codex 版本号或先前开发包的数字排序决定。未合并先前 DSH 2.1.2 的功能。
+DSH 与 Codex 分别维护版本。local.6 保留已发布 local.5 的保存失败恢复功能，并修复自定义事件导致历史加载失败的问题。
 
 ## 下载
 
-- [可直接安装的 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.5.tgz)
-- [完整源码与安装包 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.5-source.zip)
+- [可直接安装的 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.6.tgz)
+- [完整源码与安装包 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.6-source.zip)
 - [SHA-256 清单](SHA256SUMS.txt)
 
-local.5 基于用户提供的 local.4 源码独立迭代。ZIP 包含新源码、重新构建的 lib、测试、打包脚本及 dist 安装包。TGZ 中 35 个文件均与当前源码对应文件一致，包内版本保留完整的 `2.1.1+dsh-local.5`。旧 local.4 文件保留作历史下载，不作为当前版本。
+ZIP 包含完整源码、重新构建的 lib、测试、历史恢复与打包脚本及 dist 安装包。TGZ 与当前源码对应文件逐字节一致，包内保留完整版本号。旧 local.4、local.5 仅作为历史下载保留，不推荐使用。
+
+**已有受影响历史不会因升级自动恢复。** 请按 [历史恢复说明](HISTORY_RECOVERY.md) 在退出 DSH、备份后，对报错明确指出的本插件辅助事件做单份恢复。
 
 ## 安装
 
@@ -21,7 +23,7 @@ local.5 基于用户提供的 local.4 源码独立迭代。ZIP 包含新源码�
 CLI 示例（先替换为实际路径，带空格时保留双引号）：
 
 ```powershell
-dsh plugin --profile desktop add "C:\插件目录\dsh-cross-session-memory-2.1.1+dsh-local.5.tgz"
+dsh plugin --profile desktop add "C:\插件目录\dsh-cross-session-memory-2.1.1+dsh-local.6.tgz"
 ```
 
 使用桌面应用配套的 CLI，并先完全退出桌面应用。若 `dsh` 不在 PATH，使用配套 `dsh.cmd` 的完整路径；不要因此安装 npm 同名包。Web profile 将 `desktop` 改为 `web`。远程 Web 场景的安装来源必须是宿主服务器能读取的路径。
@@ -47,15 +49,15 @@ dsh plugin --profile desktop add "C:\插件目录\dsh-cross-session-memory-2.1.1
 | `lib/` | 直接运行的宿主、投影及客户端构建文件 |
 | `src/` | 命名界面、提炼、资源、存储、上下文及通用格式源码 |
 | `tests/` | 离线样例、存储、地址卡片、选项、上限及宿主测试 |
-| `scripts/` | 构建、路径解析和安装辅助脚本 |
+| `scripts/` | 构建、安装、保留完整版本号的打包与显式历史恢复脚本 |
 | `locale/` | 中英文描述 |
 | `dist/` | 原始 TGZ、安装说明及 TGZ 校验值 |
 | `FILES.txt` | 逐文件功能与接口说明 |
-| `README.md` | 包内完整功能说明，包含历史修订记录 |
+| `README.md`、`HISTORY_RECOVERY.md` | 包内功能说明、开发边界与旧历史恢复步骤 |
 | `LICENSE`、`THIRD_PARTY_NOTICES.txt` | MIT 与内嵌依赖许可 |
 
 源码与安装包不包含用户的真实记忆库。安装包发布到 GitHub 不会上传用户保存的记忆文件。
 
-## local.5 验证
+## local.6 验证
 
-37 项离线测试通过；DSH 0.2.0-rc.2 宿主模块浏览器夹具实测：两项缺失附件在首次失败后同时取消勾选，其余两项保持，第二次手动确认保存成功。通用格式模块未改动，双向录入回归通过。
+43 项 Node 回归、4 项 Python 恢复工具测试通过。真实 DSH 0.2.0-rc.2 宿主模块的保存、导入和跨会话路径通过；保存失败后确认成功的官方事件落盘后，独立新进程通过官方历史校验并还原对话及地址卡片。通用格式模块未改动，Codex 1.1.2 双向文件往返通过。完整范围见 [验证报告](INTEROP_VALIDATION.md)。

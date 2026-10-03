@@ -7,12 +7,12 @@
 | 项目 | 本指南对应版本及要求 |
 | --- | --- |
 | Codex 插件 | local-conversation-memory 1.1.2；本机 Codex CLI 0.159.0-alpha.12.1，桌面版本未取得；安装见 [README](README.md) |
-| DSH 插件 | dsh-cross-session-memory **2.1.1+dsh-local.5**（DSH 唯一当前版本） |
+| DSH 插件 | dsh-cross-session-memory **2.1.1+dsh-local.6**（DSH 唯一当前版本） |
 | DSH 宿主 | DeepSeek Harness 0.2.0-rc.2，使用桌面或 Web 图形客户端完成命名确认 |
 | 交换格式 | `format: "local-conversation-memory"`、`version: 1` |
 | 项目范围 | 两端分别在有明确工作目录的项目内操作；目标记忆写入当前项目 |
 
-仓库已提供 [DSH 专用 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.5.tgz) 及 [完整源码 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.5-source.zip)。不要把 **Codex TGZ** 当成 DSH 插件安装。两端独立编号；DSH 唯一当前标准是 `2.1.1+dsh-local.5`，与 Codex 版本号无约束关系。
+仓库已提供 [DSH 专用 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.6.tgz) 及 [完整源码 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.6-source.zip)。不要把 **Codex TGZ** 当成 DSH 插件安装。两端独立编号；DSH 唯一当前标准是 `2.1.1+dsh-local.6`，与 Codex 版本号无约束关系。
 
 取得 DSH 专用包后，可在 DSH 插件管理页面以本机 TGZ 绝对路径添加、启用，并按宿主提示重启。路径必须是运行 DSH 宿主的机器可读取的路径；远程 Web 客户端所在电脑的路径不一定可用。
 
@@ -23,7 +23,7 @@ Codex 确认保存成功后自动生成 **`portable.memory.json`**；DSH 则由�
 - DSH 中应勾选的是独立的“同时写出跨端通用记忆文件”选项，不是附件列表里已有的同名文件。把旧 JSON 当附件勾选只会再嵌入它，并增加体积。
 - 普通 `memory.json`、DSH 项目数据库、整个存储目录都不是导入命令要求的通用文件。
 - 文件可以改名为 `A.memory.json`、`B.memory.json` 以区分各次导出；不要修改内部 ID、来源或附件哈希。
-- Codex 1.1.2 会在打开确认页时取消勾选不可读附件。DSH local.5 打开时仍默认全选，但点击保存失败后会自动取消勾选可定位的失败附件或要点，显示原因并等待用户再次点击保存；目录权限、重名等非选项错误不会乱改勾选。
+- Codex 1.1.2 会在打开确认页时取消勾选不可读附件。DSH local.6 打开时仍默认全选，但点击保存失败后会自动取消勾选可定位的失败附件或要点，显示原因并等待用户再次点击保存；目录权限、重名等非选项错误不会乱改勾选。
 - 保存的是用户确认的内容。超过候选上限、未提炼为要点或取消勾选的内容不自动补回；这不是完整聊天备份。
 
 ## 3. Codex → DSH
@@ -128,7 +128,7 @@ C 实际导入确认：通过 / 失败
 | 哈希、大小或格式校验失败 | 从来源端重新导出并完整复制，不要手改校验字段 |
 | 导入成功但新对话找不到 | 确认插件启用、当前项目工作目录和存储位置正确，再明确按名称查询 |
 | 原文件来源消息为空 | 历史保存没有完整消息时属实；不能声称恢复了完整聊天 |
-| 附件选择后又移动或删除 | DSH local.5 会在保存失败后取消勾选可定位的失败项，核对后再次保存；也可先恢复文件再重新勾选 |
+| 附件选择后又移动或删除 | DSH local.6 会在保存失败后取消勾选可定位的失败项，核对后再次保存；也可先恢复文件再重新勾选 |
 
 通用文件上限 192 MiB，来源文字合计上限 32 MiB；附件单个不超过 50 MiB、合计不超过 100 MiB。Base64 会增加体积，磁盘还可能保留原附件副本。
 

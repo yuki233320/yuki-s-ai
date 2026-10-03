@@ -1,51 +1,69 @@
-# 当前版本组合的文件互操作验证
+# 当前版本的互操作与历史兼容验证
 
-验证日期：2026-10-03。插件组合：**Codex 1.1.2 ↔ DSH 2.1.1+dsh-local.5**；DSH 宿主模块 **0.2.0-rc.2**；测试运行时 Node.js **24.19.0**。本机 Codex CLI 记录为 **0.159.0-alpha.12.1**，桌面版本未取得。
+验证日期：2026-10-03。插件组合：**Codex 1.1.2 ↔ DSH 2.1.1+dsh-local.6**；DSH 宿主模块 **0.2.0-rc.2**；测试 Node.js **24.19.0**。Codex CLI 既有记录为 0.159.0-alpha.12.1，桌面版本未取得。
 
-## 结论
+## 实测范围
 
-两端能够识别通用记忆文件，并通过实际存储代码导入写入隔离的测试记忆库。测试使用合成数据；没有导入、读取或上传用户真实记忆，没有调用云端模型，本次只修改保存失败后的恢复交互，通用格式模块未改动。
+使用模拟对话与附件，在隔离测试目录运行真实存储代码和真实宿主模块。发布包不包含用户记忆、会话日志、个人附件或运行配置。没有联网模型请求，不据此声称所有桌面版本或真实模型均已端到端通过。
 
-| 检查 | 实测结果 |
+| 检查 | local.6 实测结果 |
 | --- | --- |
-| 原包一致性 | ZIP CRC 通过；TGZ SHA-256 与包内清单一致；TGZ 的 35 个文件与当前源码逐字节一致，完整版本为 local.5 |
-| DSH 离线套件 | 37 项通过，0 项失败 |
-| 离线意图样本 | 共 120 条，正样本 48、负样本 72；误报 0/72=0%，漏报 0/48=0%。这是开发验收集，不是盲测 |
-| Codex → DSH → Codex | 250 条要点、来源文本、原始 ID/来源端/时间、遗漏数量、二进制附件字节及哈希保留；两端实际写入测试库并能本地检索 |
-| DSH → Codex → DSH | DSH 原生保存 500 条；通用文件包含最近 250 条、遗漏计数 250；这 250 条在两端导入及再次导出后内容与附件一致 |
+| 发布包 | ZIP CRC 通过；TGZ 中版本完整，文件与对应源码逐字节一致；校验值见 SHA256SUMS.txt |
+| Node 回归 | 43 项通过；覆盖存储、附件、地址卡片、命令投影、导入、失败恢复及过期恢复结果拒绝 |
+| Python 历史恢复工具 | 4 项通过；默认不写入、原始备份、只改选中事件、其他压缩帧保留、重复执行及异常数据拒绝 |
+| 官方宿主集成 | 已构建 lib/index.js 在 0.2.0-rc.2 模块中完成保存、跨会话召回、导入命名投影、确认落库、列表与导出 |
+| 独立进程冷启动 | 真实宿主先记录失败→用户第二次确认成功，全部为官方已知类型；写为 Zstandard JSONL 后，由独立新进程通过官方 validateStoredEvents，恢复消息、重放失败状态与成功地址卡片 |
+| Codex → DSH → Codex | 250 条要点及可用来源文本、原始身份/来源端/时间、遗漏数量、二进制附件字节和哈希保持；两端落库及本地召回通过 |
+| DSH → Codex → DSH | 本地保存 500 条，通用文件保留最近 250 条，遗漏计数 250；交换内容、附件和原始身份保持 |
 | 重复保护 | 同一原始记忆向同一 DSH 项目重复导入被拒绝 |
-| DSH 宿主命令路径 | 在真实 0.2.0-rc.2 宿主模块中运行已交付 `lib/index.js`：导入命令 → 命名投影 → 空名称拒绝 → 模拟确认命令落库 → 列表 → 导出通过 |
-| 保存失败恢复 UI | 真实宿主模块与构建后客户端的浏览器夹具：4 个附件含 2 个缺失项；首次失败后变为 2/4，名称与有效选择保留；第二次点击才成功保存 |
-| 用户真实桌面操作 / 联网模型 | 本次未测试，不据此宣称所有界面操作或模型调用均已通过 |
+
+旧日志恢复只给已确认的插件辅助通知增加顶层 `ignorable: true`；不是宿主白名单修改，也不是任意未知事件跳过器。升级不自动恢复旧日志，见 [恢复说明](HISTORY_RECOVERY.md)。
 
 ## 已知差异
 
-最初的“完整 JSON 对象完全相等”断言发现：DSH 的 `/memory-export` 路径会重建 `extraction`，省略 Codex 的可选 `originalMessages` 统计字段。后续针对内容字段的比较通过，且单独断言了这一已知差异。**这不是完整 JSON 无损往返通过的结论。** 来源文本数组、要点、附件及原始身份在本次样本中保持一致。
+DSH `/memory-export` 会重建 `extraction`，省略 Codex 可选的 `originalMessages` 统计字段。内容字段比较通过，并单独断言此差异；这不是完整 JSON 对象逐字段无损往返的结论。
 
-DSH 本地 500 条不等于通用文件 500 条。跨端限额为 250 条；如需全部传递，应分成每份不超过 250 条的独立命名记忆。仅生成一份 500 条本地记忆的通用文件，会保留最近 250 条。
+DSH 本地上限 500 条，跨端共享格式仍是 250 条。要全部传递，请分成每份不超过 250 条的独立命名记忆。
 
 ## 复测
 
-在一个空目录中，将两个源码 ZIP 分别解压到以下目录；目录内部应直接包含各自的 `package.json` 或 `plugins/`，不要多套一层目录：
+将两个源码 ZIP 解压到以下目录，内部直接包含各自源码，不要多套一层目录：
 
 ```text
 验证目录/
 ├─ verify-interop.mjs
-├─ codex-local-memory/
-│  └─ plugins/local-conversation-memory/...
+├─ codex-local-memory/plugins/local-conversation-memory/...
 └─ dsh-local-memory/
    ├─ src/...
    ├─ lib/...
+   ├─ scripts/...
    └─ tests/...
 ```
 
-下载仓库中的 [verify-interop.mjs](verify-interop.mjs)，使用 Node.js 22+ 执行：
+下载 [verify-interop.mjs](verify-interop.mjs)，用 Node.js 22+ 运行：
 
 ```powershell
 node .\verify-interop.mjs
 node --test .\dsh-local-memory\tests\*.test.mjs
 ```
 
-脚本仅生成合成测试数据，使用临时目录运行两端真实存储函数，并清理它创建的目录；不访问已安装插件的实际记忆库。测试覆盖的字段与已知差异会输出在终端。宿主模块集成复测需要 DSH 源码包声明的开发依赖，再运行包内 `tests/interop.host.mjs`；该测试是程序驱动宿主模块，并非人工桌面验收。
+双端脚本只创建并清理它拥有的模拟测试目录，不读取已安装插件的记忆库。宿主集成需要源码 package.json 声明的开发依赖；在 DSH 源码目录执行：
 
-用户真实端对端操作的验收方法另见 [传递指南](END_TO_END_MEMORY_GUIDE.md)。
+```powershell
+pnpm install
+pnpm run build
+node tests/host.integration.mjs
+node tests/interop.host.mjs
+node tests/compatibility.host.mjs write .\compatibility-fixture
+node tests/compatibility.host.mjs read .\compatibility-fixture
+```
+
+`write` 要使用未生成过该夹具日志的目录，`read` 必须另启一个 Node 进程。此验证使用官方历史校验函数及会话重建接口，程序驱动宿主模块，不等于人工桌面界面验收。冷启动测试需 Node 具备 `node:zlib` 的 Zstandard API（本次使用 24.19.0），此要求只影响该开发测试，不影响插件 Node 22+ 运行要求。
+
+恢复工具测试另需 Python 3.9+ 和 `zstandard`：
+
+```powershell
+python tests/history_repair_test.py
+```
+
+用户真实端对端操作方法见 [传递指南](END_TO_END_MEMORY_GUIDE.md)。
