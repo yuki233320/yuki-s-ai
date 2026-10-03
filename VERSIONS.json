@@ -1,0 +1,25 @@
+{
+  "versionPolicy": "independent-per-application; explicit current release, not cross-end numeric ordering",
+  "codex": {
+    "plugin": "local-conversation-memory",
+    "current": "1.1.2",
+    "application": "Codex for Windows",
+    "observedCliVersion": "0.159.0-alpha.12.1",
+    "desktopVersion": null,
+    "node": ">=20"
+  },
+  "dsh": {
+    "plugin": "dsh-cross-session-memory",
+    "current": "2.1.1+dsh-local.4",
+    "soleCurrentRelease": true,
+    "application": "DeepSeek Harness",
+    "applicationVersion": "0.2.0-rc.2",
+    "node": ">=22",
+    "archive": "dsh-cross-session-memory-2.1.1+dsh-local.4.tgz"
+  },
+  "exchange": {
+    "format": "local-conversation-memory",
+    "version": 1,
+    "maxPoints": 250
+  }
+}
