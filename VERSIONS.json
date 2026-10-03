@@ -10,12 +10,13 @@
   },
   "dsh": {
     "plugin": "dsh-cross-session-memory",
-    "current": "2.1.1+dsh-local.4",
+    "current": "2.1.1+dsh-local.5",
     "soleCurrentRelease": true,
     "application": "DeepSeek Harness",
     "applicationVersion": "0.2.0-rc.2",
     "node": ">=22",
-    "archive": "dsh-cross-session-memory-2.1.1+dsh-local.4.tgz"
+    "archive": "dsh-cross-session-memory-2.1.1+dsh-local.5.tgz",
+    "previous": "2.1.1+dsh-local.4"
   },
   "exchange": {
     "format": "local-conversation-memory",

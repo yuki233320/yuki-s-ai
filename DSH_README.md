@@ -1,16 +1,16 @@
 # DSH 本地跨对话记忆插件
 
-**唯一当前版本：`2.1.1+dsh-local.4`。对应应用：DeepSeek Harness `0.2.0-rc.2`（Windows 桌面 / Web），宿主 Node.js 22+。**
+**唯一当前版本：`2.1.1+dsh-local.5`。对应应用：DeepSeek Harness `0.2.0-rc.2`（Windows 桌面 / Web），宿主 Node.js 22+。**
 
 DSH 与 Codex 分别维护版本。此版本是维护者指定的唯一最新 DSH 标准，不以 Codex 版本号或先前开发包的数字排序决定。未合并先前 DSH 2.1.2 的功能。
 
 ## 下载
 
-- [可直接安装的 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.4.tgz)
-- [完整源码与安装包 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.4-source.zip)
+- [可直接安装的 TGZ](dsh-cross-session-memory-2.1.1%2Bdsh-local.5.tgz)
+- [完整源码与安装包 ZIP](dsh-cross-session-memory-2.1.1%2Bdsh-local.5-source.zip)
 - [SHA-256 清单](SHA256SUMS.txt)
 
-ZIP 保持用户提供文件的原始字节，仅分发文件名改为英文。TGZ 直接从 ZIP 的 `dist/` 提取，未改动、未重建。源码与 TGZ 的版本声明相同，TGZ 中 33 个文件均与 ZIP 对应文件一致。
+local.5 基于用户提供的 local.4 源码独立迭代。ZIP 包含新源码、重新构建的 lib、测试、打包脚本及 dist 安装包。TGZ 中 35 个文件均与当前源码对应文件一致，包内版本保留完整的 `2.1.1+dsh-local.5`。旧 local.4 文件保留作历史下载，不作为当前版本。
 
 ## 安装
 
@@ -21,12 +21,12 @@ ZIP 保持用户提供文件的原始字节，仅分发文件名改为英文。T
 CLI 示例（先替换为实际路径，带空格时保留双引号）：
 
 ```powershell
-dsh plugin --profile desktop add "C:\插件目录\dsh-cross-session-memory-2.1.1+dsh-local.4.tgz"
+dsh plugin --profile desktop add "C:\插件目录\dsh-cross-session-memory-2.1.1+dsh-local.5.tgz"
 ```
 
 使用桌面应用配套的 CLI，并先完全退出桌面应用。若 `dsh` 不在 PATH，使用配套 `dsh.cmd` 的完整路径；不要因此安装 npm 同名包。Web profile 将 `desktop` 改为 `web`。远程 Web 场景的安装来源必须是宿主服务器能读取的路径。
 
-ZIP 内历史 README 的某些安装示例仍写旧 TGZ 名称，应以本页及 `dist/README.md` 的实际文件名为准；原包保持不变。
+解压源码后运行 `node scripts/pack.mjs` 可重新生成保留完整版本的标准 npm 布局 TGZ；不需要额外打包依赖。
 
 ## 当前行为
 
@@ -34,7 +34,8 @@ ZIP 内历史 README 的某些安装示例仍写旧 TGZ 名称，应以本页及
 - 本地候选上限 **500 条**；跨端通用文件仅保留所选要点中的**最近 250 条**，并提示截断数量。
 - “同时写出跨端通用记忆文件”默认勾选；取消后本次不生成该文件，可用 `/memory-export ID` 补导出。
 - 保存成功短提示会消失，路径在输入区“记忆地址”悬停卡片中查看与复制。
-- 附件仍默认全选，本版本没有不可读附件预检查；读取失败时需恢复文件或取消对应附件。
+- 打开弹窗时附件仍默认全选。点击保存后，缺失、不可读、大小超限、校验失败等能定位的附件会自动取消勾选；触发原有敏感检查的要点也可被定位。显示原因并保留弹窗，用户再次点击保存才重试。
+- 失败那次不会写入半条记忆；名称与其他选择保留。目标目录权限、磁盘错误、重名、库满及无法定位到单项的导入错误保留选择，不误取消其他选项。
 - 通用格式与 Codex 1.1.2 兼容；详见 [双端传递指南](END_TO_END_MEMORY_GUIDE.md) 和 [验证范围及结果](INTEROP_VALIDATION.md)。
 
 ## ZIP 内容
@@ -54,3 +55,7 @@ ZIP 内历史 README 的某些安装示例仍写旧 TGZ 名称，应以本页及
 | `LICENSE`、`THIRD_PARTY_NOTICES.txt` | MIT 与内嵌依赖许可 |
 
 源码与安装包不包含用户的真实记忆库。安装包发布到 GitHub 不会上传用户保存的记忆文件。
+
+## local.5 验证
+
+37 项离线测试通过；DSH 0.2.0-rc.2 宿主模块浏览器夹具实测：两项缺失附件在首次失败后同时取消勾选，其余两项保持，第二次手动确认保存成功。通用格式模块未改动，双向录入回归通过。
