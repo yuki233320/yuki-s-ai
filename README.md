@@ -9,6 +9,7 @@
 - [完整源码与安装脚本 ZIP](codex-local-memory-1.1.2.zip)（推荐，包含全部目录及测试）
 - [标准 npm 格式源码包 TGZ](codex-local-conversation-memory-1.1.2.tgz)
 - [文件结构与关键接口](FILES.md)
+- [Codex ↔ DSH 端对端记忆传递与验证指南](END_TO_END_MEMORY_GUIDE.md)
 - [更新记录](CHANGELOG.md)
 - [SHA-256 校验值](SHA256SUMS.txt)
 
